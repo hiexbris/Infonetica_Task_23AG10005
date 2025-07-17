@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pizza Orders</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 2rem; background: #fff8f4; color: #333; }
+    h1 { color: #d35400; }
+    .order-box { border: 1px solid #ccc; padding: 1rem; border-radius: 6px; margin-top: 1rem; background: #fff; }
+    .btn { margin: 0.5rem 0.5rem 0 0; padding: 0.5rem 1rem; background: #e67e22; color: white; border: none; border-radius: 4px; cursor: pointer; }
+    .btn[disabled] { background: #ccc; cursor: not-allowed; }
+    .history { margin-top: 1rem; font-size: 0.9rem; }
+  </style>
+</head>
+<body>
+  <h1>🍕 Pizza Order Tracker</h1>
+  <button class="btn" onclick="createOrder()">Create New Order</button>
+
+  <div id="ordersContainer"></div>
+
+  <script>
+    const baseUrl = "http://localhost:5068";
+    const ordersContainer = document.getElementById("ordersContainer");
+
+    const stateButtons = [
+      { id: "start_prep", label: "Start Prep", from: "order_placed" },
+      { id: "start_bake", label: "Start Bake", from: "preparing" },
+      { id: "finish_bake", label: "Finish Bake", from: "baking" },
+      { id: "deliver", label: "Deliver", from: "ready" },
+    ];
+
+    async function createOrder() {
+      const defId = "pizza_order";
+      try {
+        const res = await fetch(`${baseUrl}/instances?defId=${defId}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" }
+        });
+        if (!res.ok) {
+          const err = await res.json();
+          alert("Failed to create order: " + err.error);
+          return;
+        }
+        const data = await res.json();
+        renderOrder(data);
+      } catch (e) {
+        console.error(e);
+        alert("Server not responding or CORS error");
+      }
+    }
+
+    function renderOrder(order) {
+      const box = document.createElement("div");
+      box.className = "order-box";
+      box.id = `order-${order.id}`;
+
+      const stateEl = document.createElement("p");
+      stateEl.innerHTML = `<strong>Order ID:</strong> ${order.id} <br><strong>Current State:</strong> <span id="state-${order.id}">${order.currentState}</span>`;
+      box.appendChild(stateEl);
+
+      const btnRow = document.createElement("div");
+      stateButtons.forEach(btn => {
+        const b = document.createElement("button");
+        b.className = "btn";
+        b.textContent = btn.label;
+        b.disabled = btn.from !== order.currentState;
+        b.onclick = () => doAction(order.id, btn.id);
+        b.id = `btn-${order.id}-${btn.id}`;
+        btnRow.appendChild(b);
+      });
+      box.appendChild(btnRow);
+
+      const historyList = document.createElement("ul");
+      historyList.id = `history-${order.id}`;
+      order.history.forEach(h => {
+        const li = document.createElement("li");
+        li.textContent = `${h.actionId} at ${new Date(h.timestamp).toLocaleTimeString()}`;
+        historyList.appendChild(li);
+      });
+
+      const histWrap = document.createElement("div");
+      histWrap.className = "history";
+      histWrap.innerHTML = `<strong>History:</strong>`;
+      histWrap.appendChild(historyList);
+      box.appendChild(histWrap);
+
+      ordersContainer.prepend(box);
+    }
+
+    async function doAction(orderId, actionId) {
+      try {
+        const res = await fetch(`${baseUrl}/instances/${orderId}/actions/${actionId}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" }
+        });
+        if (!res.ok) {
+          const err = await res.json();
+          alert(err.error);
+          return;
+        }
+        const updated = await res.json();
+        updateOrderUI(updated);
+      } catch (e) {
+        alert("Action failed or backend offline");
+        console.error(e);
+      }
+    }
+
+    function updateOrderUI(order) {
+      document.getElementById(`state-${order.id}`).textContent = order.currentState;
+
+      // Enable/disable buttons
+      stateButtons.forEach(btn => {
+        const b = document.getElementById(`btn-${order.id}-${btn.id}`);
+        if (b) b.disabled = btn.from !== order.currentState;
+      });
+
+      const historyList = document.getElementById(`history-${order.id}`);
+      historyList.innerHTML = "";
+      order.history.forEach(h => {
+        const li = document.createElement("li");
+        li.textContent = `${h.actionId} at ${new Date(h.timestamp).toLocaleTimeString()}`;
+        historyList.appendChild(li);
+      });
+    }
+  </script>
+</body>
+</html>
