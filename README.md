@@ -1,105 +1,101 @@
-# 🍕 Pizza Workflow Engine — Infonetica Assignment
+# 🧠 Workflow Engine — Infonetica Assignment
 
-A lightweight, beginner-friendly .NET + HTML full-stack project to simulate a real-time pizza order tracking system using a custom workflow engine.
-
-This was built to fulfill an assignment requirement to implement a workflow engine with state transitions, and goes beyond by showcasing a fun and practical example (Pizza Shop 🍕) in a real-world UI.
+This project implements a custom **workflow engine** as specified in the Infonetica assignment. It supports dynamic state transitions for various workflows like approvals, tasks, or order flows. To make the implementation easier to understand and demonstrate, a **Pizza Order Tracker** example was added as a secondary use case.
 
 ---
 
-## 🚀 Features
+## 📄 Assignment Overview
 
-✅ Define custom workflows (states and transitions)
+The original task required:
 
-✅ Create multiple instances of a workflow (orders)
+* A system that defines workflows using states and transitions
+* Ability to create instances of a workflow
+* Transition between states using valid actions
+* Maintain a history of transitions
 
-✅ Move each instance through valid transitions
-
-✅ In-memory storage (no DB required)
-
-✅ Full frontend interface with buttons to update state
-
-✅ CORS support for clean frontend-backend separation
-
-✅ Beginner-readable code — easy to extend and adapt
+This solution meets all those requirements using a minimal and self-contained approach.
 
 ---
 
-## 🧠 How it Works
+## ✅ Features
 
-### 🏗 Backend — `Program.cs`
-
-The C# backend is written using ASP.NET Core minimal APIs:
-
-1. **WorkflowDefinition** = Defines states (e.g., `order_placed`, `baking`, `ready`) and actions (`start_bake`, `deliver`, etc.)
-
-2. **WorkflowInstance** = Represents a single pizza order in progress
-
-3. **Endpoints**:
-
-   * `POST /defs` — Add a new workflow definition
-   * `POST /instances?defId=xxx` — Create a new instance of a workflow
-   * `POST /instances/{id}/actions/{actionId}` — Move to next state
-   * `GET /instances` and `GET /defs` — Optional (for listing)
-
-### 💻 Frontend — `pizza.html`
-
-1. `Create New Order` button calls the backend to spawn a new pizza order.
-
-2. UI renders a card per order showing current state and history.
-
-3. Only valid buttons are enabled (based on current state).
-
-4. Transitions update backend and re-render updated order info.
-
-### 🧾 Styling — `style.css`
-
-Simple clean UI, color-coded and mobile-friendly. Separated from HTML.
+* Define workflows with custom states and actions
+* Instantiate new workflow instances at runtime
+* Validate and apply state transitions
+* Keep track of history for every instance
+* In-memory architecture (no DB required)
+* RESTful API using ASP.NET Core
+* Basic frontend interface using HTML + JS (secondary demo)
 
 ---
 
-## 🛠 Setup Instructions
+## 🧠 Core Concepts
 
-### ✅ Requirements:
+### 1. Workflow Definition
 
-* [.NET SDK 6+](https://dotnet.microsoft.com/en-us/download)
-* Browser (any)
+A reusable template that defines:
+
+* States (with `isInitial` and `isFinal` flags)
+* Actions (with allowed transitions between states)
+
+### 2. Workflow Instance
+
+A single runtime object based on a definition:
+
+* Tracks the current state
+* Holds a list of past actions (history)
+
+### 3. Endpoints
+
+| Endpoint                                  | Purpose                        |
+| ----------------------------------------- | ------------------------------ |
+| `POST /defs`                              | Register a workflow definition |
+| `POST /instances?defId=xyz`               | Start a new instance           |
+| `POST /instances/{id}/actions/{actionId}` | Move instance via action       |
 
 ---
 
-### ⚙️ Run the Backend
+## 🛠 How to Run Backend
 
-1. Save your C# backend file as `Program.cs`
+### Requirements
 
-2. In terminal:
+* [.NET 6 SDK](https://dotnet.microsoft.com/en-us/download)
+
+### Steps
 
 ```bash
-cd path/to/your/project
+cd path/to/project
 
 dotnet run
 ```
 
-You should see:
-
-```
-Now listening on: http://localhost:5068
-```
+Then visit: `http://localhost:5068`
 
 ---
 
-### 🌐 Run the Frontend
+## 🌐 Secondary UI: Pizza Order Tracker
 
-1. Create two files in the same folder:
+A simple HTML + JS frontend is included to demonstrate how the workflow system can be applied to real-world use cases. It simulates pizza orders moving through states like:
 
-   * `pizza.html`
-   * `style.css`
+* `order_placed` → `preparing` → `baking` → `ready` → `delivered`
 
-2. Open `pizza.html` in a browser (no server needed)
+This is not part of the original assignment but helps visualize the logic and is great for interviews or demos.
 
 ---
 
-## 🧪 Example Definition (Pizza Flow)
+## 💡 Why This Implementation Stands Out
 
-Use the following to define the pizza workflow (`POST /defs`):
+* Clean, readable, and extendable code
+* Covers all required assignment features
+* Bonus UI shows practical integration
+* No extra tooling or DB setup required
+* Beginner-friendly, yet robust
+
+---
+
+## 🔧 Sample Workflow JSON
+
+Use this with `POST /defs`:
 
 ```json
 {
@@ -120,29 +116,28 @@ Use the following to define the pizza workflow (`POST /defs`):
 }
 ```
 
-Use a tool like Git Bash or Postman:
+---
 
-```bash
-curl -X POST http://localhost:5068/defs \
-  -H "Content-Type: application/json" \
-  -d @pizza.json
-```
+## 🧾 Files
+
+| File         | Purpose                            |
+| ------------ | ---------------------------------- |
+| `Program.cs` | Main backend server with all logic |
+| `pizza.html` | Optional frontend UI for demo      |
+| `style.css`  | Styling for demo UI                |
 
 ---
 
-## 🔥 Why This Stands Out
+## 📦 Future Suggestions (Optional)
 
-* Simple, extensible workflow engine
-* Real-time frontend interaction
-* Clean separation of logic (HTML/CSS/JS + C#)
-* Beginner-friendly readable code
-* In-memory = no setup hassles
-* Pizza theme 🍕 adds fun + clarity
+* Add persistence (SQLite, file storage)
+* User authentication or roles
+* Visual drag-and-drop workflow designer
 
 ---
 
-## 🤝 Credits
+## 🙌 Final Notes
 
-This project was built by \[Your Name] as part of an Infonetica workflow engine challenge.
+This project **fully satisfies** the Infonetica assignment requirements, and adds a real-world demonstration layer for better clarity and impact.
 
-Feel free to fork and build your own custom workflow apps (food orders, customer support tickets, etc.)
+Feel free to fork, adapt, or scale it for other workflow-based systems (support tickets, document approval, etc).
