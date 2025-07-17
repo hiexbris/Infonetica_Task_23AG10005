@@ -4,14 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Pizza Orders</title>
-  <style>
-    body { font-family: Arial, sans-serif; padding: 2rem; background: #fff8f4; color: #333; }
-    h1 { color: #d35400; }
-    .order-box { border: 1px solid #ccc; padding: 1rem; border-radius: 6px; margin-top: 1rem; background: #fff; }
-    .btn { margin: 0.5rem 0.5rem 0 0; padding: 0.5rem 1rem; background: #e67e22; color: white; border: none; border-radius: 4px; cursor: pointer; }
-    .btn[disabled] { background: #ccc; cursor: not-allowed; }
-    .history { margin-top: 1rem; font-size: 0.9rem; }
-  </style>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <h1>🍕 Pizza Order Tracker</h1>
@@ -110,7 +103,6 @@
     function updateOrderUI(order) {
       document.getElementById(`state-${order.id}`).textContent = order.currentState;
 
-      // Enable/disable buttons
       stateButtons.forEach(btn => {
         const b = document.getElementById(`btn-${order.id}-${btn.id}`);
         if (b) b.disabled = btn.from !== order.currentState;
