@@ -132,12 +132,3 @@ Use this with `POST /defs`:
 
 * Add persistence (SQLite, file storage)
 * User authentication or roles
-* Visual drag-and-drop workflow designer
-
----
-
-## 🙌 Final Notes
-
-This project **fully satisfies** the Infonetica assignment requirements, and adds a real-world demonstration layer for better clarity and impact.
-
-Feel free to fork, adapt, or scale it for other workflow-based systems (support tickets, document approval, etc).
