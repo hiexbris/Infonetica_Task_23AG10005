@@ -83,16 +83,6 @@ This is not part of the original assignment but helps visualize the logic and is
 
 ---
 
-## 💡 Why This Implementation Stands Out
-
-* Clean, readable, and extendable code
-* Covers all required assignment features
-* Bonus UI shows practical integration
-* No extra tooling or DB setup required
-* Beginner-friendly, yet robust
-
----
-
 ## 🔧 Sample Workflow JSON
 
 Use this with `POST /defs`:
